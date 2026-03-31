@@ -231,6 +231,15 @@ export const analyzeUserBehavior = async (userId) => {
 export const fraudDetection = async (req, res, next) => {
   try {
     const { brand, model, price, imei, images, billImage } = req.body;
+
+    // Early validation - return 400 if required fields are missing
+    if (!brand || !model || !price || !imei || !images || !billImage) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide all required fields (brand, model, price, imei, images, billImage)'
+      });
+    }
+
     const userId = req.user._id;
 
     const fraudChecks = {
@@ -269,7 +278,7 @@ export const fraudDetection = async (req, res, next) => {
     }
 
     // 3. Check duplicate images
-    const imageUrls = images.map(img => img.url);
+    const imageUrls = Array.isArray(images) ? images.map(img => img.url || img).filter(Boolean) : [];
     const imageDuplicateCheck = await checkDuplicateImages(imageUrls);
     if (imageDuplicateCheck.isDuplicate) {
       fraudReasons.push('Duplicate images');
