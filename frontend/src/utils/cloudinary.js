@@ -1,41 +1,39 @@
 import api from './api';
 
+// Convert file to base64
+const fileToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+};
+
+// Upload single image to backend (Cloudinary or Local)
 export const uploadToCloudinary = async (file, folder = 'trustfhone/products') => {
   try {
-    // Get signature from backend
-    const { data } = await api.get(`/api/cloudinary/signature?folder=${folder}&resource_type=image`);
+    // Convert to base64
+    const base64 = await fileToBase64(file);
     
-    const { signature, timestamp, cloud_name, api_key } = data;
-    
-    // Create form data
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('api_key', api_key);
-    formData.append('timestamp', timestamp);
-    formData.append('signature', signature);
-    formData.append('folder', folder);
-    
-    // Upload to Cloudinary
-    const uploadResponse = await fetch(
-      `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
-      {
-        method: 'POST',
-        body: formData
-      }
-    );
-    
-    const result = await uploadResponse.json();
+    // Upload to backend
+    const { data } = await api.post('/api/cloudinary/upload', {
+      image: base64,
+      folder: folder
+    });
     
     return {
-      url: result.secure_url,
-      publicId: result.public_id
+      url: data.url,
+      publicId: data.publicId,
+      storage: data.storage
     };
   } catch (error) {
-    console.error('Cloudinary upload error:', error);
+    console.error('Image upload error:', error);
     throw error;
   }
 };
 
+// Upload multiple images
 export const uploadMultipleToCloudinary = async (files, folder = 'trustfhone/products') => {
   const uploadPromises = Array.from(files).map(file => uploadToCloudinary(file, folder));
   return Promise.all(uploadPromises);

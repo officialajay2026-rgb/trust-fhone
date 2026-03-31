@@ -1,8 +1,78 @@
 import express from 'express';
 import cloudinary from '../config/cloudinary.js';
 import { protect } from '../middleware/auth.js';
+import { saveImageLocally } from '../utils/localImageStorage.js';
 
 const router = express.Router();
+
+// Check if Cloudinary is properly configured
+const isCloudinaryConfigured = () => {
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+  const apiKey = process.env.CLOUDINARY_API_KEY;
+  const apiSecret = process.env.CLOUDINARY_API_SECRET;
+  
+  return cloudName && 
+         apiKey && 
+         apiSecret &&
+         cloudName !== 'demo' &&
+         cloudName !== 'your_cloud_name_here' &&
+         !cloudName.includes('placeholder');
+};
+
+// @route   POST /api/cloudinary/upload
+// @desc    Upload image (Cloudinary or Local fallback)
+// @access  Private
+router.post('/upload', protect, async (req, res) => {
+  try {
+    const { image, folder = 'trustfhone' } = req.body;
+    
+    if (!image) {
+      return res.status(400).json({
+        success: false,
+        message: 'No image provided'
+      });
+    }
+
+    // Check if Cloudinary is configured
+    if (isCloudinaryConfigured()) {
+      // Try Cloudinary upload
+      try {
+        const result = await cloudinary.uploader.upload(image, {
+          folder: folder,
+          resource_type: 'image'
+        });
+        
+        return res.json({
+          success: true,
+          url: result.secure_url,
+          publicId: result.public_id,
+          storage: 'cloudinary'
+        });
+      } catch (cloudinaryError) {
+        console.error('Cloudinary upload failed, using local storage:', cloudinaryError.message);
+      }
+    }
+    
+    // Fallback to local storage
+    const localResult = saveImageLocally(image, folder);
+    
+    res.json({
+      success: true,
+      url: `${process.env.BACKEND_URL || 'http://localhost:8001'}${localResult.url}`,
+      publicId: localResult.publicId,
+      storage: 'local',
+      message: 'Using local storage. Add Cloudinary credentials for cloud storage.'
+    });
+    
+  } catch (error) {
+    console.error('Image upload error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error uploading image',
+      error: error.message
+    });
+  }
+});
 
 // @route   GET /api/cloudinary/signature
 // @desc    Generate signature for Cloudinary upload
