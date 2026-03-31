@@ -203,16 +203,32 @@ const HomePage = () => {
         <div className="absolute inset-0 gradient-primary opacity-10"></div>
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-            Ready to Sell Your Phone?
+            Join TrustFhone Delhi Community
           </h2>
           <p className="text-lg text-slate-300 mb-8">
-            Join thousands of verified sellers. List your phone in minutes with complete trust.
+            Get instant updates, deals, and connect with verified buyers & sellers on WhatsApp
           </p>
-          <Link to={isAuthenticated ? '/seller-dashboard' : '/auth'} data-testid="start-selling-button">
-            <Button size="lg" className="gradient-primary text-white hover:scale-105 transition-transform">
-              Start Selling Now
-            </Button>
-          </Link>
+          
+          <div className="flex flex-wrap gap-4 justify-center mb-8">
+            <a 
+              href="https://chat.whatsapp.com/YOUR_GROUP_INVITE_CODE" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-full transition-all hover:scale-105"
+              data-testid="whatsapp-group-button"
+            >
+              💬 Join WhatsApp Community
+            </a>
+            <Link to={isAuthenticated ? '/seller-dashboard' : '/auth'} data-testid="start-selling-button">
+              <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10">
+                Start Selling Now
+              </Button>
+            </Link>
+          </div>
+          
+          <p className="text-sm text-slate-400">
+            🔔 Get notified about new listings, price drops, and verified deals
+          </p>
         </div>
       </section>
     </div>

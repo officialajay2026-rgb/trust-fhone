@@ -68,8 +68,16 @@ const Footer = () => {
 
           {/* Trust */}
           <div>
-            <h3 className="text-white font-bold mb-4">Trust & Safety</h3>
-            <ul className="space-y-2">
+            <h3 className="text-white font-bold mb-4">Join Community</h3>
+            <a 
+              href="https://chat.whatsapp.com/YOUR_GROUP_INVITE_CODE" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center px-4 py-2 mb-3 bg-green-500/20 text-green-400 border border-green-500/30 rounded-full hover:bg-green-500/30 transition-colors text-sm font-bold"
+            >
+              💬 WhatsApp Group
+            </a>
+            <ul className="space-y-2 mt-3">
               <li className="text-slate-400 text-sm">✓ AI-Powered Fraud Detection</li>
               <li className="text-slate-400 text-sm">✓ IMEI Verification</li>
               <li className="text-slate-400 text-sm">✓ Bill Authentication</li>
