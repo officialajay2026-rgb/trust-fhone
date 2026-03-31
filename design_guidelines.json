@@ -1,0 +1,109 @@
+{
+  "theme": "dark",
+  "archetype": "Archetype 5 (Jewel & Luxury) with Archetype 7 (Electric & Neon) accents for Trust Verification",
+  "colors": {
+    "background": "#020617",
+    "surface": "#0f172a",
+    "surface_glass": "rgba(15, 23, 42, 0.6)",
+    "primary": "#8b5cf6",
+    "primary_gradient": "linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)",
+    "trust_neon": "#22c55e",
+    "trust_neon_glow": "drop-shadow(0 0 8px rgba(34, 197, 94, 0.6))",
+    "text_main": "#f8fafc",
+    "text_muted": "#94a3b8",
+    "border": "rgba(255, 255, 255, 0.1)"
+  },
+  "typography": {
+    "font_heading": "Outfit, sans-serif",
+    "font_body": "Manrope, sans-serif",
+    "heading_h1": "text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter text-white",
+    "heading_h2": "text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white",
+    "heading_h3": "text-xl sm:text-2xl font-bold text-slate-200",
+    "body_main": "text-base leading-relaxed text-slate-300",
+    "labels": "text-xs font-bold uppercase tracking-[0.2em] text-slate-400"
+  },
+  "layout_spacing": {
+    "container": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+    "section_padding": "py-20 lg:py-32",
+    "grid_bento": "grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8",
+    "grid_dashboard": "grid grid-cols-1 md:grid-cols-4 gap-4"
+  },
+  "surface_styles": {
+    "glass_card": "backdrop-blur-xl bg-slate-900/60 border border-white/10 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]",
+    "solid_card": "bg-slate-900 border border-slate-800 rounded-xl",
+    "neon_border": "border border-green-500/50 shadow-[0_0_15px_rgba(34,197,94,0.2)]"
+  },
+  "motion_guidelines": {
+    "hover_card": "transition-all duration-300 hover:-translate-y-1 hover:border-purple-500/50 hover:shadow-[0_8px_32px_rgba(139,92,246,0.15)]",
+    "page_transition": "framer-motion initial={opacity: 0, y: 20} animate={opacity: 1, y: 0} transition={duration: 0.5}",
+    "trust_pulse": "animate-pulse"
+  },
+  "component_instructions": {
+    "buttons": "Primary buttons use blue-to-purple gradient background with white text. Apply hover scale 1.05 and soft shadow. Secondary buttons use transparent background with border-white/20.",
+    "trust_badges": "Use neon green text with a glowing icon. Background should be bg-green-500/10 with border-green-500/30. Fully rounded-full px-3 py-1.",
+    "fraud_meter": "Use Recharts or a custom SVG arc to display the AI Fraud Score (0-100). Red for low trust, Yellow for mid, Neon Green for 90+ trust.",
+    "forms": "Use Shadcn inputs. Background bg-slate-950/50, border-white/10. Focus ring should be primary purple.",
+    "navigation": "Sticky top header using crystal glass style: backdrop-blur-xl bg-slate-950/70. Border bottom white/10.",
+    "icons": "Use lucide-react. For trust/verification, use shield, check-circle, zap."
+  },
+  "testing_attributes": {
+    "instruction": "All interactive elements, buttons, inputs, cards MUST include descriptive data-testid attributes (e.g., data-testid='hero-cta-button', data-testid='fraud-score-meter', data-testid='seller-listing-form')."
+  },
+  "media_urls": {
+    "hero_backgrounds": [
+      {
+        "url": "https://static.prod-images.emergentagent.com/jobs/8d106aa1-6d12-4c5b-9a2c-eb67cd53533b/images/7791a881020bb25b59cb20fbe0c8e841dda492e65217ad7398a64e6a81f4d8e7.png",
+        "description": "Dark premium tech background with subtle holographics",
+        "category": "hero_bg"
+      }
+    ],
+    "trust_icons": [
+      {
+        "url": "https://static.prod-images.emergentagent.com/jobs/8d106aa1-6d12-4c5b-9a2c-eb67cd53533b/images/2397c86223d619cf17f3bf770f1d68303934b6c7f8703e417ddda9be8a9b6bd3.png",
+        "description": "Neon green glowing 3D AI security shield",
+        "category": "trust_indicator"
+      }
+    ],
+    "product_images": [
+      {
+        "url": "https://images.unsplash.com/photo-1773414422164-eefdc240da58?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzOTB8MHwxfHNlYXJjaHwxfHxwcmVtaXVtJTIwc21hcnRwaG9uZSUyMGRhcmt8ZW58MHx8fHwxNzc0OTY2OTk2fDA&ixlib=rb-4.1.0&q=85",
+        "description": "Premium dark smartphone lenses",
+        "category": "product_gallery"
+      },
+      {
+        "url": "https://images.pexels.com/photos/256198/pexels-photo-256198.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Elegant chrome finished smartphone",
+        "category": "product_gallery"
+      },
+      {
+        "url": "https://images.pexels.com/photos/6751554/pexels-photo-6751554.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Modern expensive smartphone",
+        "category": "product_gallery"
+      },
+      {
+        "url": "https://static.prod-images.emergentagent.com/jobs/8d106aa1-6d12-4c5b-9a2c-eb67cd53533b/images/98ecccec5f5fd538af27ff66e0c2d3bcf738e9cb2d83dba2c200e948559ed4bc.png",
+        "description": "3D Verified premium smartphone with green checkmark",
+        "category": "product_feature"
+      }
+    ],
+    "user_avatars": [
+      {
+        "url": "https://images.unsplash.com/photo-1586297135537-94bc9ba060aa?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzF8MHwxfHNlYXJjaHwzfHx1c2VyJTIwYXZhdGFyJTIwcG9ydHJhaXR8ZW58MHx8fHwxNzc0OTY3MDE5fDA&ixlib=rb-4.1.0&q=85",
+        "description": "User Avatar 1",
+        "category": "avatar"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1639149888905-fb39731f2e6c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzF8MHwxfHNlYXJjaHwyfHx1c2VyJTIwYXZhdGFyJTIwcG9ydHJhaXR8ZW58MHx8fHwxNzc0OTY3MDE5fDA&ixlib=rb-4.1.0&q=85",
+        "description": "User Avatar 2",
+        "category": "avatar"
+      }
+    ],
+    "logos": [
+      {
+        "url": "https://images.unsplash.com/photo-1559051668-e1fa58f25786?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA4Mzl8MHwxfHNlYXJjaHwzfHxtb2Rlcm4lMjBtaW5pbWFsJTIwdGVjaCUyMGxvZ28lMjB3aGl0ZXxlbnwwfHx8fDE3NzQ5NjcwMjB8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Brand logo placeholder",
+        "category": "brand_logo"
+      }
+    ]
+  }
+}
