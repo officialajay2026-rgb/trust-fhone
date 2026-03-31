@@ -47,11 +47,11 @@ const Footer = () => {
               </li>
               <li className="flex items-center text-slate-400 text-sm">
                 <Phone className="w-4 h-4 mr-2" />
-                +91 98765 43210
+                +91 82875 50979
               </li>
               <li>
                 <a 
-                  href="https://wa.me/919876543210?text=Hi%2C%20I%27m%20interested%20in%20TrustFhone%20Delhi" 
+                  href="https://wa.me/918287550979?text=Hi%2C%20I%27m%20interested%20in%20TrustFhone%20Delhi" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="inline-flex items-center text-sm px-3 py-1 bg-green-500/20 text-green-400 border border-green-500/30 rounded-full hover:bg-green-500/30 transition-colors"

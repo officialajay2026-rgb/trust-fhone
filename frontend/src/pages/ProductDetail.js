@@ -190,7 +190,7 @@ const ProductDetail = () => {
               </Button>
               
               <a 
-                href={`https://wa.me/919876543210?text=Hi%2C%20interested%20in%20${listing.brand}%20${listing.model}%20-%20%E2%82%B9${listing.price}`}
+                href={`https://wa.me/918287550979?text=Hi%2C%20interested%20in%20${listing.brand}%20${listing.model}%20-%20%E2%82%B9${listing.price}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block mt-3"
