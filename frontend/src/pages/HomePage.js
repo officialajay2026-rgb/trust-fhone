@@ -56,17 +56,25 @@ const HomePage = () => {
             transition={{ duration: 0.8 }}
             className="text-center"
           >
-            <div className="inline-flex items-center px-4 py-2 bg-green-500/10 border border-green-500/30 rounded-full mb-6" data-testid="hero-badge">
-              <Zap className="w-4 h-4 neon-green mr-2" />
-              <span className="text-sm font-bold neon-green">AI-Powered Fraud Detection</span>
+            <div className="flex gap-3 justify-center mb-6">
+              <div className="inline-flex items-center px-4 py-2 bg-orange-500/10 border border-orange-500/30 rounded-full" data-testid="beta-badge">
+                <span className="text-sm font-bold text-orange-400">🚀 BETA TESTING</span>
+              </div>
+              <div className="inline-flex items-center px-4 py-2 bg-green-500/10 border border-green-500/30 rounded-full" data-testid="hero-badge">
+                <Zap className="w-4 h-4 neon-green mr-2" />
+                <span className="text-sm font-bold neon-green">AI-Powered Fraud Detection</span>
+              </div>
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter text-white mb-6" data-testid="hero-title">
               Trusted Phones.
               <br />
               <span className="gradient-text">Zero Fraud.</span>
             </h1>
-            <p className="text-lg sm:text-xl text-slate-300 max-w-3xl mx-auto mb-8" data-testid="hero-subtitle">
+            <p className="text-lg sm:text-xl text-slate-300 max-w-3xl mx-auto mb-4" data-testid="hero-subtitle">
               India's first AI-verified mobile marketplace. Every listing verified through IMEI validation, bill authentication, and fraud detection.
+            </p>
+            <p className="text-sm text-orange-400 max-w-2xl mx-auto mb-8 bg-orange-500/10 border border-orange-500/20 rounded-lg px-4 py-2">
+              ⚡ Beta Testing Phase - Free listing for early users! Join now and help us build India's most trusted phone marketplace.
             </p>
 
             {/* Search Bar */}
