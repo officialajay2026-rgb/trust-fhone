@@ -41,12 +41,8 @@ const HomePage = () => {
     <div data-testid="home-page">
       {/* Hero Section */}
       <section
-        className="relative py-20 lg:py-32 overflow-hidden"
-        style={{
-          backgroundImage: 'url(https://static.prod-images.emergentagent.com/jobs/8d106aa1-6d12-4c5b-9a2c-eb67cd53533b/images/7791a881020bb25b59cb20fbe0c8e841dda492e65217ad7398a64e6a81f4d8e7.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }}
+        className="relative py-20 lg:py-32 overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900"
+        data-testid="hero-section"
       >
         <div className="absolute inset-0 bg-gradient-to-b from-[#020617] via-[#020617]/80 to-[#020617]"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
