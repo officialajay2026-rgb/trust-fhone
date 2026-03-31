@@ -56,12 +56,16 @@ router.post('/upload', protect, async (req, res) => {
     // Fallback to local storage
     const localResult = saveImageLocally(image, folder);
     
+    // Build full URL from the request's origin for local storage
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'https';
+    const host = req.headers['x-forwarded-host'] || req.headers.host;
+    const baseUrl = `${protocol}://${host}`;
+    
     res.json({
       success: true,
-      url: `${process.env.BACKEND_URL || 'http://localhost:8001'}${localResult.url}`,
+      url: `${baseUrl}${localResult.url}`,
       publicId: localResult.publicId,
-      storage: 'local',
-      message: 'Using local storage. Add Cloudinary credentials for cloud storage.'
+      storage: 'local'
     });
     
   } catch (error) {

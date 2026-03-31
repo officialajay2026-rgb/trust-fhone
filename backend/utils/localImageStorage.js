@@ -19,16 +19,22 @@ export const saveImageLocally = (base64Data, folder = 'products') => {
     // Remove data:image/jpeg;base64, prefix if present
     const base64Image = base64Data.replace(/^data:image\/\w+;base64,/, '');
     
+    // Create subfolder if needed
+    const subDir = path.join(UPLOAD_DIR, folder);
+    if (!fs.existsSync(subDir)) {
+      fs.mkdirSync(subDir, { recursive: true });
+    }
+    
     // Generate unique filename
-    const filename = `${folder}_${crypto.randomBytes(16).toString('hex')}.jpg`;
-    const filepath = path.join(UPLOAD_DIR, filename);
+    const filename = `${crypto.randomBytes(16).toString('hex')}.jpg`;
+    const filepath = path.join(subDir, filename);
     
     // Save file
     fs.writeFileSync(filepath, base64Image, 'base64');
     
     // Return URL that can be served
-    const publicId = `uploads/${filename}`;
-    const url = `/uploads/${filename}`;
+    const publicId = `uploads/${folder}/${filename}`;
+    const url = `/uploads/${folder}/${filename}`;
     
     return {
       url,

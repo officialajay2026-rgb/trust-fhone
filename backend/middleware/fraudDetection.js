@@ -1,5 +1,7 @@
 import crypto from 'crypto';
-import OpenAI from 'openai';
+import { execFile } from 'child_process';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import Listing from '../models/Listing.js';
 import User from '../models/User.js';
 import FraudReport from '../models/FraudReport.js';
@@ -7,9 +9,8 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: '.env.node' });
 
-const openai = new OpenAI({
-  apiKey: process.env.EMERGENT_LLM_KEY || process.env.OPENAI_API_KEY
-});
+const __filename_fd = fileURLToPath(import.meta.url);
+const __dirname_fd = path.dirname(__filename_fd);
 
 // IMEI Validation using Luhn Algorithm
 export const validateIMEI = (imei) => {
@@ -81,16 +82,15 @@ export const checkDuplicateImages = async (imageUrls) => {
   return { isDuplicate: false, message: 'No duplicate images found' };
 };
 
-// AI-powered Bill OCR verification
+// AI-powered Bill OCR verification using Python emergentintegrations helper
 export const verifyBillWithAI = async (billImageUrl, brand, price) => {
   try {
-    // Check if API key is configured
     const apiKey = process.env.EMERGENT_LLM_KEY || process.env.OPENAI_API_KEY;
     if (!apiKey || apiKey === 'your_api_key_here' || apiKey.includes('placeholder')) {
-      console.warn('OpenAI API key not configured, skipping AI bill verification');
+      console.warn('API key not configured, skipping AI bill verification');
       return {
         success: false,
-        brandMatch: true, // Pass by default when AI not available
+        brandMatch: true,
         priceMatch: true,
         extractedBrand: brand,
         extractedPrice: price,
@@ -99,62 +99,70 @@ export const verifyBillWithAI = async (billImageUrl, brand, price) => {
       };
     }
 
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini', // Use more stable model
-      messages: [
-        {
-          role: 'system',
-          content: 'You are an expert bill verification assistant. Extract text from the bill image and verify if the brand name and price match. Return a JSON response with: brandMatch (boolean), priceMatch (boolean), extractedBrand (string), extractedPrice (number), confidence (0-100), and notes (string).'
-        },
-        {
-          role: 'user',
-          content: [
-            {
-              type: 'text',
-              text: `Please verify this bill image. Expected brand: ${brand}, Expected price: ${price}. Extract all visible text and verify if the brand and price match.`
-            },
-            {
-              type: 'image_url',
-              image_url: {
-                url: billImageUrl
-              }
-            }
-          ]
-        }
-      ],
-      max_tokens: 500
-    });
-
-    const result = response.choices[0].message.content;
-    
-    try {
-      const parsed = JSON.parse(result);
-      return {
-        success: true,
-        brandMatch: parsed.brandMatch || false,
-        priceMatch: parsed.priceMatch || false,
-        extractedBrand: parsed.extractedBrand || '',
-        extractedPrice: parsed.extractedPrice || 0,
-        confidence: parsed.confidence || 0,
-        notes: parsed.notes || result
-      };
-    } catch (parseError) {
-      return {
-        success: true,
-        brandMatch: result.toLowerCase().includes(brand.toLowerCase()),
-        priceMatch: result.includes(price.toString()),
-        extractedBrand: '',
-        extractedPrice: 0,
-        confidence: 50,
-        notes: result
-      };
+    // Extract base64 from data URL or use raw URL
+    let imageBase64 = '';
+    if (billImageUrl.startsWith('data:')) {
+      imageBase64 = billImageUrl.replace(/^data:image\/\w+;base64,/, '');
+    } else {
+      // For remote URLs, pass as-is (the Python helper handles it)
+      imageBase64 = billImageUrl;
     }
+
+    const ocrHelperPath = path.resolve(__dirname_fd, '../ocr_helper.py');
+    
+    return new Promise((resolve) => {
+      const inputData = JSON.stringify({
+        image_base64: imageBase64,
+        brand: brand,
+        price: price
+      });
+
+      const child = execFile('python3', [ocrHelperPath], {
+        cwd: path.resolve(__dirname_fd, '..'),
+        timeout: 30000,
+        maxBuffer: 10 * 1024 * 1024
+      }, (error, stdout, stderr) => {
+        if (error) {
+          console.error('OCR helper error:', error.message);
+          if (stderr) console.error('OCR stderr:', stderr);
+          resolve({
+            success: false,
+            brandMatch: true,
+            priceMatch: true,
+            extractedBrand: brand,
+            extractedPrice: price,
+            confidence: 30,
+            notes: `AI verification unavailable - ${error.message}. Manual review required.`
+          });
+          return;
+        }
+
+        try {
+          const result = JSON.parse(stdout.trim());
+          resolve(result);
+        } catch (parseError) {
+          console.error('OCR response parse error:', parseError);
+          resolve({
+            success: false,
+            brandMatch: true,
+            priceMatch: true,
+            extractedBrand: brand,
+            extractedPrice: price,
+            confidence: 30,
+            notes: 'AI verification response could not be parsed. Manual review required.'
+          });
+        }
+      });
+
+      // Write input data to stdin
+      child.stdin.write(inputData);
+      child.stdin.end();
+    });
   } catch (error) {
     console.error('AI Bill verification error:', error);
-    // Return success with lower confidence instead of failing completely
     return {
       success: false,
-      brandMatch: true, // Pass by default to not block legitimate listings
+      brandMatch: true,
       priceMatch: true,
       extractedBrand: brand,
       extractedPrice: price,
