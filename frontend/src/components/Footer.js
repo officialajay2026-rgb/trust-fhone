@@ -70,7 +70,7 @@ const Footer = () => {
           <div>
             <h3 className="text-white font-bold mb-4">Join Community</h3>
             <a 
-              href="https://chat.whatsapp.com/YOUR_GROUP_INVITE_CODE" 
+              href="https://chat.whatsapp.com/HVgOaGj2gyY72Wb87z1sUq?mode=gi_t" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-flex items-center px-4 py-2 mb-3 bg-green-500/20 text-green-400 border border-green-500/30 rounded-full hover:bg-green-500/30 transition-colors text-sm font-bold"

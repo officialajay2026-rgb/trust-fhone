@@ -211,7 +211,7 @@ const HomePage = () => {
           
           <div className="flex flex-wrap gap-4 justify-center mb-8">
             <a 
-              href="https://chat.whatsapp.com/YOUR_GROUP_INVITE_CODE" 
+              href="https://chat.whatsapp.com/HVgOaGj2gyY72Wb87z1sUq?mode=gi_t" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-flex items-center px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-full transition-all hover:scale-105"
