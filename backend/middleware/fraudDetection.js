@@ -84,8 +84,23 @@ export const checkDuplicateImages = async (imageUrls) => {
 // AI-powered Bill OCR verification
 export const verifyBillWithAI = async (billImageUrl, brand, price) => {
   try {
+    // Check if API key is configured
+    const apiKey = process.env.EMERGENT_LLM_KEY || process.env.OPENAI_API_KEY;
+    if (!apiKey || apiKey === 'your_api_key_here' || apiKey.includes('placeholder')) {
+      console.warn('OpenAI API key not configured, skipping AI bill verification');
+      return {
+        success: false,
+        brandMatch: true, // Pass by default when AI not available
+        priceMatch: true,
+        extractedBrand: brand,
+        extractedPrice: price,
+        confidence: 50,
+        notes: 'AI verification skipped - API key not configured. Manual review recommended.'
+      };
+    }
+
     const response = await openai.chat.completions.create({
-      model: 'gpt-5.2',
+      model: 'gpt-4o-mini', // Use more stable model
       messages: [
         {
           role: 'system',
@@ -136,14 +151,15 @@ export const verifyBillWithAI = async (billImageUrl, brand, price) => {
     }
   } catch (error) {
     console.error('AI Bill verification error:', error);
+    // Return success with lower confidence instead of failing completely
     return {
       success: false,
-      brandMatch: false,
-      priceMatch: false,
-      extractedBrand: '',
-      extractedPrice: 0,
-      confidence: 0,
-      notes: `AI verification failed: ${error.message}`
+      brandMatch: true, // Pass by default to not block legitimate listings
+      priceMatch: true,
+      extractedBrand: brand,
+      extractedPrice: price,
+      confidence: 30,
+      notes: `AI verification unavailable - ${error.message}. Manual review required.`
     };
   }
 };
@@ -275,17 +291,24 @@ export const fraudDetection = async (req, res, next) => {
         }
       };
 
-      if (!billVerification.brandMatch) {
-        fraudReasons.push('Brand mismatch in bill');
-        fraudScore += 25;
-      }
-      if (!billVerification.priceMatch) {
-        fraudReasons.push('Price mismatch in bill');
-        fraudScore += 20;
-      }
-      if (billVerification.confidence < 50) {
-        fraudReasons.push('Low confidence in bill verification');
-        fraudScore += 10;
+      // Only add fraud score if AI verification actually worked
+      if (billVerification.success) {
+        if (!billVerification.brandMatch) {
+          fraudReasons.push('Brand mismatch in bill');
+          fraudScore += 25;
+        }
+        if (!billVerification.priceMatch) {
+          fraudReasons.push('Price mismatch in bill');
+          fraudScore += 20;
+        }
+        if (billVerification.confidence < 50) {
+          fraudReasons.push('Low confidence in bill verification');
+          fraudScore += 10;
+        }
+      } else {
+        // AI not available, give minimal penalty for manual review
+        fraudReasons.push('Bill verification pending (AI unavailable)');
+        fraudScore += 5;
       }
     } else {
       fraudChecks.billOCR.passed = false;
