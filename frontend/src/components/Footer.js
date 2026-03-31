@@ -80,7 +80,7 @@ const Footer = () => {
 
         <div className="border-t border-white/10 mt-8 pt-8 text-center">
           <p className="text-sm text-slate-400">
-            © 2025 TrustFhone Delhi. All rights reserved. Built with AI-powered trust.
+            © 2026 TrustFhone Delhi. All rights reserved. Built with AI-powered trust.
           </p>
         </div>
       </div>
