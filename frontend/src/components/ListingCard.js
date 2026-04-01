@@ -1,13 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Heart, Eye, MapPin } from 'lucide-react';
+import { Heart, Eye } from 'lucide-react';
 import TrustBadge from './TrustBadge';
 import { Card } from './ui/card';
+import { useAuth } from '../context/AuthContext';
+import api from '../utils/api';
+import { toast } from 'sonner';
 
-const ListingCard = ({ listing, onWishlistToggle }) => {
+const ListingCard = ({ listing, onWishlistToggle, isWishlisted: initialWishlisted }) => {
+  const { isAuthenticated } = useAuth();
+  const [wishlisted, setWishlisted] = useState(initialWishlisted || false);
   const trustScore = 100 - (listing.fraudScore || 0);
   const isHighTrust = trustScore >= 70;
+
+  const handleWishlist = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isAuthenticated) {
+      toast.error('Login karein wishlist use karne ke liye');
+      return;
+    }
+    try {
+      if (wishlisted) {
+        await api.delete(`/api/user/wishlist/${listing._id}`);
+        setWishlisted(false);
+        toast.success('Wishlist se hataya');
+      } else {
+        await api.post(`/api/user/wishlist/${listing._id}`);
+        setWishlisted(true);
+        toast.success('Wishlist mein add kiya');
+      }
+      if (onWishlistToggle) onWishlistToggle(listing._id);
+    } catch (error) {
+      const msg = error.response?.data?.message || 'Error';
+      if (msg.includes('already')) { setWishlisted(true); }
+      else toast.error(msg);
+    }
+  };
 
   return (
     <motion.div
@@ -18,7 +48,6 @@ const ListingCard = ({ listing, onWishlistToggle }) => {
     >
       <Card className="glass-card overflow-hidden hover-lift cursor-pointer group">
         <Link to={`/product/${listing._id}`}>
-          {/* Image */}
           <div className="relative h-48 bg-slate-800 overflow-hidden">
             <img
               src={listing.images?.[0]?.url || 'https://via.placeholder.com/400x300'}
@@ -26,10 +55,19 @@ const ListingCard = ({ listing, onWishlistToggle }) => {
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
             />
             {isHighTrust && (
-              <div className="absolute top-2 right-2">
+              <div className="absolute top-2 left-2">
                 <TrustBadge verified={true} size="sm" />
               </div>
             )}
+            <button
+              onClick={handleWishlist}
+              className={`absolute top-2 right-2 p-2 rounded-full transition-all ${
+                wishlisted ? 'bg-red-500/90 text-white' : 'bg-black/50 text-slate-300 hover:bg-red-500/80 hover:text-white'
+              }`}
+              data-testid="wishlist-heart-button"
+            >
+              <Heart className={`w-4 h-4 ${wishlisted ? 'fill-current' : ''}`} />
+            </button>
             <div className="absolute bottom-2 left-2">
               <span
                 className={`px-2 py-1 rounded-full text-xs font-bold ${
@@ -45,27 +83,12 @@ const ListingCard = ({ listing, onWishlistToggle }) => {
             </div>
           </div>
 
-          {/* Content */}
           <div className="p-4">
-            <div className="flex items-start justify-between mb-2">
-              <div>
-                <h3 className="text-lg font-bold text-white group-hover:text-purple-400 transition-colors">
-                  {listing.brand} {listing.model}
-                </h3>
-                <p className="text-sm text-slate-400">By {listing.seller?.name || 'Seller'}</p>
-              </div>
-              {onWishlistToggle && (
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onWishlistToggle(listing._id);
-                  }}
-                  className="text-slate-400 hover:text-red-400 transition-colors"
-                  data-testid="wishlist-button"
-                >
-                  <Heart className="w-5 h-5" />
-                </button>
-              )}
+            <div className="mb-2">
+              <h3 className="text-lg font-bold text-white group-hover:text-purple-400 transition-colors">
+                {listing.brand} {listing.model}
+              </h3>
+              <p className="text-sm text-slate-400">By {listing.seller?.name || 'Seller'}</p>
             </div>
 
             <div className="flex items-center justify-between mt-4">
@@ -77,20 +100,10 @@ const ListingCard = ({ listing, onWishlistToggle }) => {
                 </div>
               </div>
               <div className="text-right">
-                <div
-                  className={`text-sm font-bold ${
-                    trustScore >= 70
-                      ? 'text-green-400'
-                      : trustScore >= 40
-                      ? 'text-yellow-400'
-                      : 'text-red-400'
-                  }`}
-                >
+                <div className={`text-sm font-bold ${trustScore >= 70 ? 'text-green-400' : trustScore >= 40 ? 'text-yellow-400' : 'text-red-400'}`}>
                   {trustScore}% Trust
                 </div>
-                {listing.hasBox && (
-                  <span className="text-xs text-slate-400">✓ Box Available</span>
-                )}
+                {listing.hasBox && <span className="text-xs text-slate-400">Box Available</span>}
               </div>
             </div>
           </div>

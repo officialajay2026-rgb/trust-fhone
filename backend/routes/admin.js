@@ -4,6 +4,7 @@ import User from '../models/User.js';
 import FraudReport from '../models/FraudReport.js';
 import AdminLog from '../models/AdminLog.js';
 import { protect, authorize } from '../middleware/auth.js';
+import { sendNotification } from '../utils/notifications.js';
 
 const router = express.Router();
 
@@ -169,6 +170,19 @@ router.put('/approve/:id', protect, authorize('admin'), async (req, res) => {
       message: 'Listing approved successfully',
       listing
     });
+
+    // Send notification to seller
+    const seller = await User.findById(listing.seller);
+    if (seller) {
+      await sendNotification({
+        userId: seller._id,
+        type: 'listing_approved',
+        title: 'Listing Approved!',
+        message: `Your listing "${listing.brand} ${listing.model}" has been approved and is now live on the marketplace.`,
+        link: `/product/${listing._id}`,
+        email: seller.email
+      });
+    }
   } catch (error) {
     console.error('Approve listing error:', error);
     res.status(500).json({
@@ -227,6 +241,18 @@ router.put('/reject/:id', protect, authorize('admin'), async (req, res) => {
       message: 'Listing rejected',
       listing
     });
+
+    // Send notification to seller
+    if (seller) {
+      await sendNotification({
+        userId: seller._id,
+        type: 'listing_rejected',
+        title: 'Listing Rejected',
+        message: `Your listing "${listing.brand} ${listing.model}" was rejected. Reason: ${rejectionReason || 'Did not meet verification standards'}.`,
+        link: `/seller-dashboard`,
+        email: seller.email
+      });
+    }
   } catch (error) {
     console.error('Reject listing error:', error);
     res.status(500).json({

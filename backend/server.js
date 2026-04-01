@@ -11,6 +11,9 @@ import listingRoutes from './routes/listings.js';
 import adminRoutes from './routes/admin.js';
 import userRoutes from './routes/user.js';
 import cloudinaryRoutes from './routes/cloudinary.js';
+import chatRoutes from './routes/chat.js';
+import reviewRoutes from './routes/reviews.js';
+import notificationRoutes from './routes/notifications.js';
 
 // Load environment variables
 dotenv.config({ path: '.env.node' });
@@ -64,6 +67,9 @@ app.use('/api/listings', listingRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/cloudinary', cloudinaryRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
